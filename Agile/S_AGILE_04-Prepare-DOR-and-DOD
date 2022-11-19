@@ -1,0 +1,12 @@
+Defination of Ready (DOR):
+  1- Clear stack holders.
+  2- Clear end result.
+  3- Clear required performance and required time processing.
+  4- Clear process without any ambiguity.
+  5- Clear dependencies for the user story.
+
+Defination of Done (DOD):
+  1- Test cases are written.
+  2- The Code isn't have any type of errors (compile and runtime).
+  3- Pass the test cases.
+  4- Achieve the required end results.
