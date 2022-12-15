@@ -1,0 +1,88 @@
+#! us/bin/env bash
+
+#create library with functions to do the following: function to check if the user running the script has root privilages ... another function to change ssh default port .. another function to disable root login, another function to add new user to the system and to check if you want to add this user to the sudoers or not .. another function to add backup to crontab to backup the user home directory .. then call this library of functions file to the script you intend to run ... bonus: write while loop that waits for a file to exist before quiting the loop and show that the file is existed now
+
+# 1-Fnction to check if the user running the script has root privileges:
+check_privileges(){
+        SubGroups=$(id)
+        if grep -q 'root\|wheel' <<< "$SubGroups"
+        then
+                echo "You are a root user or have a sudo access"
+        else
+                echo "You are a normal user"
+        fi
+}
+
+
+# 2-Fnction to change ssh default port:
+change_port(){
+        echo "Enter a new port number: "
+        read New_Port
+
+        sudo sed -i "s/^#Port 22/Port $New_Port/g" /etc/ssh/sshd_config
+        echo "Your default port number has been changed to $New_Port"
+}
+
+
+# 3-Fnction to disable root login:
+disable_root_login(){
+        sudo sed -i "s/^PermitRootLogin yes/PermitRootLogin no/g" /etc/ssh/sshd_config
+        echo "Root login has been disabled"
+}
+
+
+# 4-Function to add new user to the system and to check if you want to add this user to the sudoers or not:
+add_user(){
+        echo "Enter the new user name: "
+        read New_user_add
+        echo "Would you like to get Sudoer's access to this user $New_user_add \[y or n\]?"
+        read answer_q
+
+        useradd $New_user_add
+        if [ $(answer_q) == "y" ]
+        then
+                sudo usermod -a -G wheel $New_user_add
+                echo "Sudo privilege has been granted to $New_user_add user."
+        else
+                exit
+        fi
+}
+
+
+# 5-Function to add backup to crontab to backup the user home directory:
+backup_fun(){
+        mkdir -p /home/$USER/backup_task2/bkp_Date_$(date +'%Y-%m-%d')
+        echo "***** tar -cfz /home/$USER/backup_task2/bkp_Date_$(date +'%Y-%m-%d')/$(date +'%H-%M-%S').tar.gz /home/$USER/*" >> /home/bkp_script.scr
+
+        crontab /home/bkp_script.scr
+}
+
+
+
+# 6-Call this library of functions file to the script you intend to run:
+# In the a new script  
+
+#! us/bin/env bash
+
+source /home/n_desk/test/bash_Assignment_2.sh
+
+check_privileges
+change_port
+disable_root_login
+add_user
+backup_fun
+serach_for_file
+
+
+
+# 7-Write while loop that waits for a file to exist before quiting the loop and show that the file is existed now:
+search_for_file(){
+        while [ ! -f /usr/tmp/bonus.txt ];
+        do
+                echo "looking for /usr/tmp/bonus.txt "
+                sleep 3
+        done
+
+        echo "the file is existed now"
+}
+
