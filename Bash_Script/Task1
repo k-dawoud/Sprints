@@ -1,0 +1,37 @@
+#! us/bin/env bash
+
+
+#create bash script to make sure that you have a directory called: Reports under your home directory. and then create files for 12 months in this year the format of home directory is ~/Reports/2022/11/13.xls ... make sure that the file and directories exists if not then create them and make backups directory under your home directory and backup your new reports. (bonus: the backup part of the script runs only between 12AM and 5AM daily)
+
+# This function is to check and create files
+create_files()
+{
+        MAX=$(cal $1 2022 | awk 'NF {DAYS= $NF}; END {print DAYS}')
+        for ((d=1; d<= $MAX;d++))
+        do
+                if [ ! -f /home/n_desk/test/Reports/2022/$m/$d.xls ]
+                then
+                        touch /home/n_desk/test/Reports/2022/$m/$d.xls
+                fi
+        done
+}
+
+
+for m in {1..12}
+do
+        if [ ! -d /home/n_desk/test/Reports/2022/$m ]
+        then
+                mkdir -p /home/n_desk/test/Reports/2022/$m
+                create_files $m
+        else
+                create_files $m
+        fi
+done
+echo "All directories and files are created!"
+
+
+# This command is for creating backup when running this script (Only between 12:00 AM & 5:00 AM)
+if [ "$(date +%H)" -ge "00" ] && [ "$(date +%H)" -le "05" ]
+then
+        rsync -av /home/n_desk/test/Reports /home/Reports.bak
+fi
