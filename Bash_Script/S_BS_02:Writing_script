@@ -20,15 +20,16 @@ function listing_data(){
         df -h | awk '{print $1,$5,$6}' > ./disk_info.txt
         error_free
         echo "disk usage list"
+        dmesg > ./dmesg.txt
         ls -al *.txt
 }
 
 function validate_and_compress(){
         listing_data
-        if [[ -f process_info.txt && -f memroy_info.txt && -f disk_info.txt && -f /var/logs/dmesg ]];
+        if [[ -f process_info.txt ]] && [[ -f memroy_info.txt ]] && [[ -f disk_info.txt ]] && [[ -f dmesg.txt ]];
         then
                 echo "Files are existed and will run the compressing..."
-                tar -cfvz files_compressed.tar.gz rocess_info.txt memroy_info.txt disk_info.txt /var/logs/dmesg
+                tar -cfvz files_compressed.tar.gz rocess_info.txt memroy_info.txt disk_info.txt dmesg.txt
                 echo "Files are successfully compressed."
                 ls -al files_compressed.tar.gz
         else
@@ -43,5 +44,6 @@ function ssh_sending(){
         read -p "Enter path: " v_path
         rsync -avz files_compressed.tar.gz $v_username@$v_ip:$v_path
 }
+
 
 ssh_sending
