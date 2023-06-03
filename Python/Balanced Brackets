@@ -1,0 +1,25 @@
+def balance_check(input_brackets):
+    open_brackets = ['[', '{', '(']
+    matches = [('(', ')'), ('[', ']'), ('{', '}')]
+    stack = []
+
+    if len(input_brackets) % 2 != 0:
+        return False
+    for bracket in input_brackets:
+        if bracket in open_brackets:
+            stack.append(bracket)
+        else:
+            if len(stack) == 0:
+                return False
+            last_open = stack.pop()
+            if (last_open, bracket) not in matches:
+                return False
+    return len(stack) == 0
+
+while True:
+    reply = input(print("do you want to enter an input or exit? [yes/no] "))
+    if reply == 'no':
+        break
+    else:
+        user_input = input(print("enter your characters: "))
+        print(balance_check(user_input))
